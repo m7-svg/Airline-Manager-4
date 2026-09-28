@@ -1,5 +1,7 @@
 name: Playwright Tests
 on:
+  schedule:
+    - cron: '17,47 * * * *'
   workflow_dispatch:
     inputs:
       aktifkan_random_delay:
@@ -12,6 +14,10 @@ on:
         type: boolean
         required: false
         default: false
+
+concurrency:
+  group: am4-bot
+  cancel-in-progress: false
 
 jobs:
   test:
@@ -27,7 +33,7 @@ jobs:
     
     - name: Random Delay
       # Langkah ini hanya berjalan jika opsi 'aktifkan_random_delay' bernilai true (tercentang)
-      if: github.event.inputs.aktifkan_random_delay == 'true' || github.event.inputs.aktifkan_random_delay == ''
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.aktifkan_random_delay == 'true'
       run: |
          DELAY=$(( RANDOM % 1500 ))
          echo "Menunggu $DELAY detik..."
